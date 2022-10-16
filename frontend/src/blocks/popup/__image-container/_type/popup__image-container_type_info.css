@@ -1,0 +1,7 @@
+.popup__image-container_type_info {
+    width: 358px;
+    padding: 60px 36px;
+    background: #FFF;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}

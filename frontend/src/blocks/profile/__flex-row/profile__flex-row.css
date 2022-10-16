@@ -1,0 +1,10 @@
+.profile__flex-row {
+  display: flex;
+  gap: 18px;
+}
+
+@media screen and (max-width: 900px) {
+  .profile__flex-row {
+    gap: 10px;
+  }
+}
