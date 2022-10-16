@@ -1,4 +1,4 @@
-const serverUrl = "http://mesto.neron.nomoredomains.icu";
+const serverUrl = "https://mesto.neron.nomoredomains.icu";
 const okInfo = "Вы успешно зарегистрировались";
 const notOkInfo = "Что-то пошло не так!\n" + "Попробуйте ещё раз.";
 
