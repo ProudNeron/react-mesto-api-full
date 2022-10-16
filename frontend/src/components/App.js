@@ -34,26 +34,23 @@ function App() {
 
   const navigate = useNavigate();
 
+  const token = localStorage.getItem('token');
+
   useEffect(() => {
     handleCheckToken();
   }, []);
 
   useEffect(() => {
     if (loggedIn) {
-      const userProfileData = api.getProfileData();
-
-      userProfileData.then((profileData) => {
-        setCurrentUser(profileData);
-      }).catch(err => alert(err));
-    }
-  }, [loggedIn]);
-
-  useEffect(() => {
-    if (loggedIn) {
-      api.getAllCards().then((dataCards) => {
-        dataCards.sort((j, k) => Date.parse(k.createdAt) - Date.parse(j.createdAt));
-        setCardsState(dataCards);
-      }).catch(err => alert(err));
+      Promise.all([api.getProfileData(token), api.getAllCards(token)])
+        .then(([profileData, dataCards]) => {
+          setCurrentUser(profileData);
+          dataCards.sort((j, k) => Date.parse(k.createdAt) - Date.parse(j.createdAt));
+          setCardsState(dataCards);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }, [loggedIn]);
 
@@ -87,39 +84,39 @@ function App() {
   }
 
   function handleUpdateUser({name, about}) {
-    api.patchProfileData({name, about}).then((data) => {
+    api.patchProfileData({name, about}, token).then((data) => {
       setCurrentUser(data);
     }).catch(err => alert(err));
   }
 
   function handleUpdateAvatar(link) {
-    api.patchProfileAvatar(link).then((data) => {
+    api.patchProfileAvatar(link, token).then((data) => {
       setCurrentUser(data);
     }).catch(err => alert(err));
   }
 
   function handleAddPlaceSubmit({name, link}) {
-    api.postCard({name, link}).then((newCard) => {
+    api.postCard({name, link}, token).then((newCard) => {
       setCardsState((prevState) => [newCard, ...prevState]);
     }).catch(err => alert(err));
   }
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some(j => j._id == currentUser._id);
+    const isLiked = card.likes.some(j => j == currentUser._id);
 
     if (isLiked) {
-      api.deleteLike(card._id).then((newCard) => {
+      api.deleteLike(card._id, token).then((newCard) => {
         setCardsState((state) => state.map(c => c._id == card._id ? newCard : c));
       }).catch(err => alert(err));
     } else {
-      api.putLike(card._id).then((newCard) => {
+      api.putLike(card._id, token).then((newCard) => {
         setCardsState((state) => state.map(c => c._id == card._id ? newCard : c));
       }).catch(err => alert(err));
     }
   }
 
   function handleCardDelete() {
-    api.deleteCard(deletingCardId).then(() => {
+    api.deleteCard(deletingCardId, token).then(() => {
       setCardsState((prevState) => prevState.filter(c => c._id != deletingCardId));
     }).catch(err => alert(err));
   }
@@ -139,7 +136,6 @@ function App() {
   function handleAuthorization({email, password}) {
     return signin({email, password}).then((res) => {
       setLoggedIn(true);
-      console.log(res.token);
       localStorage.setItem('token', res["token"]);
       setUserEmail(email);
       navigate('/');
@@ -170,7 +166,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header logOut={logOut} user={userEmail}/>
+        <Header logOut={logOut} email={userEmail}/>
         <Routes>
           <Route path="/" element={<ProtectedRoute loggedIn={loggedIn}>
             <Main cards={cards} onEditProfile={handleEditProfileClick}

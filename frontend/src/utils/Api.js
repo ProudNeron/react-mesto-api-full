@@ -14,70 +14,89 @@ class Api {
     return Promise.reject(res.statusMessage);
   }
 
-  getAllCards() {
+  getAllCards(token) {
     return fetch(`${this._url}/cards`, {
       method: 'GET',
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-type' : 'application/json',
+      },
     }).then(res => this._checkServerResponse(res));
   }
 
-  postCard({name, link}) {
+  postCard({name, link}, token) {
     return fetch(`${this._url}/cards`, {
       method: 'POST',
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-type' : 'application/json',
+      },
       body: JSON.stringify({name: name, link: link})
     }).then(res => this._checkServerResponse(res));
   }
 
-  deleteCard(cardId) {
+  deleteCard(cardId, token) {
     return fetch(`${this._url}/cards/${cardId}`, {
       method: 'DELETE',
-      headers: this._headers
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(res => this._checkServerResponse(res));
   }
 
-  getProfileData() {
+  getProfileData(token) {
     return fetch(`${this._url}/users/me`, {
       method: 'GET',
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-type' : 'application/json',
+      },
     }).then(res => this._checkServerResponse(res));
   }
 
-  patchProfileData({name, about}) {
+  patchProfileData({name, about}, token) {
     return fetch(`${this._url}/users/me`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-type' : 'application/json',
+      },
       body: JSON.stringify({name: name, about: about})
     }).then((res) => this._checkServerResponse(res));
   }
 
-  patchProfileAvatar(link) {
+  patchProfileAvatar(link, token) {
     return fetch(`${this._url}/users/me/avatar`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-type' : 'application/json',
+      },
       body: JSON.stringify({avatar: link})
     }).then((res) => this._checkServerResponse(res));
   }
 
-  putLike(cardId) {
+  putLike(cardId, token) {
     return fetch(`${this._url}/cards/${cardId}/likes`, {
       method: 'PUT',
-      headers: this._headers
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(res => this._checkServerResponse(res));
   }
 
-  deleteLike(cardId) {
+  deleteLike(cardId, token) {
     return fetch(`${this._url}/cards/${cardId}/likes`, {
       method: 'DELETE',
-      headers: this._headers
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }).then(res => this._checkServerResponse(res));
   }
 }
 
 const api = new Api({
   url: serverUrl,
-  headers: {authorization: `Bearer ${localStorage.getItem('token')}`,
-    'Content-type': 'application/json',
-  }});
+});
 
 export {api};
