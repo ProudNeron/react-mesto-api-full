@@ -166,7 +166,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header logOut={logOut} email={userEmail}/>
+        <Header logOut={logOut} email={currentUser?.email}/>
         <Routes>
           <Route path="/" element={<ProtectedRoute loggedIn={loggedIn}>
             <Main cards={cards} onEditProfile={handleEditProfileClick}
